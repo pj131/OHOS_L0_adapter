@@ -1,0 +1,60 @@
+From 5897f116aa6518bcb137c3d1a6096e590afb40e9 Mon Sep 17 00:00:00 2001
+From: n028753 <jie.pan@archermind.com>
+Date: Tue, 18 Apr 2023 16:43:20 +0800
+Subject: [PATCH 6/6] =?UTF-8?q?=E6=97=A5=E5=BF=97=E8=BE=93=E5=87=BA?=
+ =?UTF-8?q?=E5=88=B0adapter=E6=8E=A5=E5=8F=A3?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Change-Id: Ic164fe3764a01f1f0ce7b3acb91f5490c939eece
+---
+ hiview_util.c | 25 +++++++++++++++++++++++++
+ 1 file changed, 25 insertions(+)
+
+diff --git a/hiview_util.c b/hiview_util.c
+index be10054..5a8146d 100644
+--- a/hiview_util.c
++++ b/hiview_util.c
+@@ -126,6 +126,30 @@ uint32 HIVIEW_GetTaskId()
+     return (uint32)osThreadGetId();
+ }
+ 
++#define UART_OUT_ADAPTER 1
++
++#if UART_OUT_ADAPTER
++extern void printf_adapter(const char *fmt, ...);
++extern void putchar_adapter(int ch);
++extern void vprintf_adapter(const char *fmt, va_list ap);
++void HIVIEW_UartPrint(const char *str)
++{
++    printf_adapter(str);
++}
++void HIVIEW_UartPrintf(const char *fmt, ...)
++{
++    va_list vaList;
++    va_start(vaList, fmt);
++    vprintf_adapter(fmt, vaList);
++    va_end(vaList);
++}
++void HIVIEW_UartPutChar(int ch)
++{
++    putchar_adapter(ch);
++}
++
++#else
++
+ #define OSI_MAKE_LOG_TAG(a, b, c, d) ((unsigned)(a) | ((unsigned)(b) << 7) | ((unsigned)(c) << 14) | ((unsigned)(d) << 21))
+ extern void osiTraceBasic(unsigned tag, unsigned nargs, const char *fmt, ...);
+ extern void osiTraceVprintf(unsigned tag, const char *fmt, va_list ap);
+@@ -177,6 +201,7 @@ void HIVIEW_UartPutChar(int ch)
+ 
+     HIVIEW_MutexUnlock(bufMutex); 
+ }
++#endif
+ 
+ void HIVIEW_Sleep(uint32 ms)
+ {
+-- 
+2.25.1
+

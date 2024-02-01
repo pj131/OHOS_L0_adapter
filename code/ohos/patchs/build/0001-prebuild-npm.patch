@@ -1,0 +1,52 @@
+From 99f17741e5d3ed5c8be45e04de227a7453f38952 Mon Sep 17 00:00:00 2001
+From: n028753 <jie.pan@archermind.com>
+Date: Wed, 29 Mar 2023 09:10:05 +0800
+Subject: [PATCH 1/2] =?UTF-8?q?prebuild=E8=B0=83=E8=BF=87npm=E5=AE=89?=
+ =?UTF-8?q?=E8=A3=85=E8=BF=87=E7=A8=8B?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Change-Id: Ia26bd1f42a2639f9de1ecd95184da20c4ecd9e6c
+---
+ prebuilts_download.py | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/prebuilts_download.py b/prebuilts_download.py
+index 0f35e62d..f1d0d1ee 100644
+--- a/prebuilts_download.py
++++ b/prebuilts_download.py
+@@ -71,8 +71,8 @@ def _uncompress(args, src_file, code_dir, unzip_dir, unzip_filename, mark_file_p
+     _run_cmd(cmd)
+ 
+     # npm install
+-    if os.path.basename(unzip_dir) == 'nodejs':
+-        _npm_install(args, code_dir, unzip_dir, unzip_filename)
++    # if os.path.basename(unzip_dir) == 'nodejs':
++    #     _npm_install(args, code_dir, unzip_dir, unzip_filename)
+ 
+ def _copy_url(args, task_id, url, local_file, code_dir, unzip_dir, unzip_filename, mark_file_path, progress):
+     # download files
+@@ -135,8 +135,8 @@ def _hwcloud_download(args, config, bin_dir, code_dir):
+                     args.progress.console.log('{}, Sha256 markword check OK.'.format(huaweicloud_url), style='green')
+                 else:
+                     print('{}, Sha256 markword check OK.'.format(huaweicloud_url))
+-                if os.path.basename(abs_unzip_dir) == 'nodejs':
+-                    _npm_install(args, code_dir, unzip_dir, unzip_filename)
++                # if os.path.basename(abs_unzip_dir) == 'nodejs':
++                #     _npm_install(args, code_dir, unzip_dir, unzip_filename)
+             else:
+                 _run_cmd('rm -rf ' + code_dir + '/' + unzip_dir + '/*.' + unzip_filename + '.mark')
+                 _run_cmd('rm -rf ' + code_dir + '/' + unzip_dir + '/' + unzip_filename)
+@@ -293,7 +293,7 @@ def main():
+             _hwcloud_download(args, copy_config, args.bin_dir, args.code_dir)
+ 
+     _file_handle(file_handle_config, args.code_dir)
+-    _node_modules_copy(node_modules_copy_config, args.code_dir, args.enable_symlink)
++    # _node_modules_copy(node_modules_copy_config, args.code_dir, args.enable_symlink)
+ 
+ if __name__ == '__main__':
+     sys.exit(main())
+-- 
+2.25.1
+

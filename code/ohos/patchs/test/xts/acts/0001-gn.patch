@@ -1,0 +1,122 @@
+From cca8d0cca71584a8e675f36171ef154a96585807 Mon Sep 17 00:00:00 2001
+From: n028753 <jie.pan@archermind.com>
+Date: Fri, 31 Mar 2023 14:25:06 +0800
+Subject: [PATCH 1/2] =?UTF-8?q?=E5=A2=9E=E5=8A=A0=E5=A4=B4=E6=96=87?=
+ =?UTF-8?q?=E4=BB=B6=E5=8C=85=E5=90=AB=E7=9B=AE=E5=BD=95?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Change-Id: I926e39d15f266d05a3cc3213ef2666999685fb74
+---
+ appexecfwk_lite/appexecfwk_hal/BUILD.gn                       | 1 +
+ commonlibrary_lite/file_hal/BUILD.gn                          | 1 +
+ distributed_schedule_lite/system_ability_manager_hal/BUILD.gn | 1 +
+ hiviewdfx_lite/hievent_hal/BUILD.gn                           | 1 +
+ security_lite/huks/liteos_m_adapter/BUILD.gn                  | 1 +
+ startup_lite/bootstrap_hal/BUILD.gn                           | 1 +
+ startup_lite/syspara_hal/BUILD.gn                             | 3 ++-
+ update_lite/dupdate_hal/BUILD.gn                              | 1 +
+ 8 files changed, 9 insertions(+), 1 deletion(-)
+
+diff --git a/appexecfwk_lite/appexecfwk_hal/BUILD.gn b/appexecfwk_lite/appexecfwk_hal/BUILD.gn
+index 586f56a3fa..846f2c9ad0 100755
+--- a/appexecfwk_lite/appexecfwk_hal/BUILD.gn
++++ b/appexecfwk_lite/appexecfwk_hal/BUILD.gn
+@@ -22,6 +22,7 @@ hctest_suite("ActsBundleMgrTest") {
+     "${appexecfwk_lite_path}/interfaces/kits/bundle_lite",
+     "${appexecfwk_lite_path}/utils/bundle_lite",
+     "//commonlibrary/utils_lite/memory/include",
++    "//base/hiviewdfx/hiview_lite"
+   ]
+   if (board_toolchain_type != "iccarm") {
+     cflags = [ "-Wno-error" ]
+diff --git a/commonlibrary_lite/file_hal/BUILD.gn b/commonlibrary_lite/file_hal/BUILD.gn
+index 94d5be2a46..99361d7497 100644
+--- a/commonlibrary_lite/file_hal/BUILD.gn
++++ b/commonlibrary_lite/file_hal/BUILD.gn
+@@ -23,6 +23,7 @@ hctest_suite("ActsUtilsFileTest") {
+   include_dirs = [
+     "src",
+     "//commonlibrary/utils_lite/include",
++    "//base/hiviewdfx/hiview_lite"
+   ]
+   if (board_toolchain_type != "iccarm") {
+     cflags = [ "-Wno-error" ]
+diff --git a/distributed_schedule_lite/system_ability_manager_hal/BUILD.gn b/distributed_schedule_lite/system_ability_manager_hal/BUILD.gn
+index c727b6b0f1..db2119dd8f 100755
+--- a/distributed_schedule_lite/system_ability_manager_hal/BUILD.gn
++++ b/distributed_schedule_lite/system_ability_manager_hal/BUILD.gn
+@@ -44,6 +44,7 @@ hctest_suite("ActsSamgrTest") {
+     "//foundation/systemabilitymgr/samgr_lite/samgr/source",
+     "src",
+     "utils",
++    "//base/hiviewdfx/hiview_lite"
+   ]
+ 
+   public_deps =
+diff --git a/hiviewdfx_lite/hievent_hal/BUILD.gn b/hiviewdfx_lite/hievent_hal/BUILD.gn
+index cf24a4f70d..53ee9d7cb7 100755
+--- a/hiviewdfx_lite/hievent_hal/BUILD.gn
++++ b/hiviewdfx_lite/hievent_hal/BUILD.gn
+@@ -19,6 +19,7 @@ hctest_suite("ActsHieventLiteTest") {
+   include_dirs = [
+     "src",
+     "//base/hiviewdfx/hievent_lite/interfaces/native/innerkits",
++    "//base/hiviewdfx/hiview_lite"
+   ]
+ 
+   if (board_toolchain_type != "iccarm") {
+diff --git a/security_lite/huks/liteos_m_adapter/BUILD.gn b/security_lite/huks/liteos_m_adapter/BUILD.gn
+index 698f9ff9bd..0e2747a284 100644
+--- a/security_lite/huks/liteos_m_adapter/BUILD.gn
++++ b/security_lite/huks/liteos_m_adapter/BUILD.gn
+@@ -41,6 +41,7 @@ hctest_suite("ActsHuksHalFunctionTest") {
+     "//base/iothardware/peripheral/interfaces/inner_api",
+     "//base/security/huks/frameworks/huks_standard/main/common/include",
+     "../common/include",
++    "//base/hiviewdfx/hiview_lite"
+   ]
+ 
+   deps = [ "//test/xts/acts/security_lite/huks/common:huks_test_common" ]
+diff --git a/startup_lite/bootstrap_hal/BUILD.gn b/startup_lite/bootstrap_hal/BUILD.gn
+index a639a9dfc2..76715528f4 100644
+--- a/startup_lite/bootstrap_hal/BUILD.gn
++++ b/startup_lite/bootstrap_hal/BUILD.gn
+@@ -20,6 +20,7 @@ hctest_suite("ActsBootstrapTest") {
+   include_dirs = [
+     "src",
+     "//commonlibrary/utils_lite/include",
++    "//base/hiviewdfx/hiview_lite"
+   ]
+   if (board_toolchain_type != "iccarm") {
+     cflags = [ "-Wno-error" ]
+diff --git a/startup_lite/syspara_hal/BUILD.gn b/startup_lite/syspara_hal/BUILD.gn
+index cc91968eb1..ca03ec4f2e 100755
+--- a/startup_lite/syspara_hal/BUILD.gn
++++ b/startup_lite/syspara_hal/BUILD.gn
+@@ -24,7 +24,8 @@ hctest_suite("ActsParameterTest") {
+ 
+   include_dirs = [
+     "src",
+-    "///base/startup/init/interfaces/innerkits/include/syspara",
++    "//base/startup/init/interfaces/innerkits/include/syspara",
++    "//base/hiviewdfx/hiview_lite"
+   ]
+   if (board_toolchain_type != "iccarm") {
+     cflags = [ "-Wno-error" ]
+diff --git a/update_lite/dupdate_hal/BUILD.gn b/update_lite/dupdate_hal/BUILD.gn
+index 9270722093..e1863dec5e 100755
+--- a/update_lite/dupdate_hal/BUILD.gn
++++ b/update_lite/dupdate_hal/BUILD.gn
+@@ -19,6 +19,7 @@ hctest_suite("ActsUpdaterFuncTest") {
+   include_dirs = [
+     "src",
+     "//base/update/ota_lite/interfaces/kits",
++    "//base/hiviewdfx/hiview_lite"
+   ]
+ 
+   if (board_toolchain_type != "iccarm") {
+-- 
+2.25.1
+

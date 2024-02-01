@@ -1,0 +1,46 @@
+From 89670551d503127274ab2bc822462ae6f697c9f4 Mon Sep 17 00:00:00 2001
+From: n028753 <jie.pan@archermind.com>
+Date: Mon, 3 Apr 2023 17:10:53 +0800
+Subject: [PATCH 2/3] =?UTF-8?q?=E9=80=82=E9=85=8D=E6=89=93=E5=8D=B0?=
+ =?UTF-8?q?=E6=8E=A5=E5=8F=A3?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Change-Id: I9ec59853bfa641434d13c12242c9dc315b3079d5
+---
+ lite/hctest/include/hctest.h       | 1 +
+ lite/hctest/include/unity_config.h | 5 ++++-
+ 2 files changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/lite/hctest/include/hctest.h b/lite/hctest/include/hctest.h
+index a5b5546..cac40a4 100644
+--- a/lite/hctest/include/hctest.h
++++ b/lite/hctest/include/hctest.h
+@@ -24,6 +24,7 @@
+ 
+ #include <hiview_util.h>
+ #define printf HIVIEW_UartPrintf
++#define putchar HIVIEW_UartPutChar
+ 
+ #define CONST_EMPTY_STRING    ""
+ #define CONST_STRING_SPACE    " "
+diff --git a/lite/hctest/include/unity_config.h b/lite/hctest/include/unity_config.h
+index e5e1ad2..d499d35 100644
+--- a/lite/hctest/include/unity_config.h
++++ b/lite/hctest/include/unity_config.h
+@@ -20,7 +20,10 @@
+ 
+ #define UNITY_EXCLUDE_LIMITS_H
+ #define UNITY_EXCLUDE_STDINT_H
+-#define UNITY_OUTPUT_CHAR(a)  printf("%c",(a))
++// #define UNITY_OUTPUT_CHAR(a)  printf("%c",(a))
++
++#include <hiview_util.h>
++#define UNITY_OUTPUT_CHAR HIVIEW_UartPutChar
+ 
+ 
+ #define UNITY_EXCLUDE_SETJMP_H
+-- 
+2.25.1
+

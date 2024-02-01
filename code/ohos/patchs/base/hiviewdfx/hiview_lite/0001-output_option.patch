@@ -1,0 +1,29 @@
+From d912007e69c70a77021bc971c8a619f2a6798d8c Mon Sep 17 00:00:00 2001
+From: n028753 <jie.pan@archermind.com>
+Date: Tue, 28 Mar 2023 16:48:28 +0800
+Subject: [PATCH 1/6] =?UTF-8?q?=E4=BF=AE=E6=94=B9output=5Foption?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Change-Id: I53d924ca303a47d418391cf1404612a84e4454c7
+---
+ BUILD.gn | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/BUILD.gn b/BUILD.gn
+index 67814df..11248a5 100644
+--- a/BUILD.gn
++++ b/BUILD.gn
+@@ -12,7 +12,7 @@
+ # limitations under the License.
+ 
+ declare_args() {
+-  ohos_hiviewdfx_hiview_lite_output_option = 1
++  ohos_hiviewdfx_hiview_lite_output_option = 0
+   ohos_hiviewdfx_hilog_lite_level = 1
+   ohos_hiviewdfx_hilog_lite_level_release = 3
+   ohos_hiviewdfx_hilog_lite_log_switch = 1
+-- 
+2.25.1
+

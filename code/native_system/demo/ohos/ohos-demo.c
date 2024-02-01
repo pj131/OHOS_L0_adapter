@@ -1,0 +1,45 @@
+/* Copyright (C) 2018 RDA Technologies Limited and/or its affiliates("RDA").
+ * All rights reserved.
+ *
+ * This software is supplied "AS IS" without any warranties.
+ * RDA assumes no responsibility or liability for the use of the software,
+ * conveys no license or title under any patent, copyright, or mask work
+ * right to the product. RDA reserves the right to make changes in the
+ * software without notification.  RDA also make no representation or
+ * warranty that such application will be suitable for the specified use
+ * without further testing or modification.
+ */
+
+#include <stdio.h>
+#include "CmUtils.h"
+#include "CmSys.h"
+
+#include "ohos_init.h"
+#include "log.h"
+
+///////OHOS DEMO thread////////////////////////////////////////////////////////////////////////////////
+
+static void DemoSdkTask(void* arg)
+{
+    (void)arg;
+    HILOG_INFO(HILOG_MODULE_APP, "DemoSdkTask start , arg:%p", arg);
+    for (int n = 0; n < 1000; n++) {
+        HILOG_INFO(HILOG_MODULE_APP, "DemoSdkTask hello ohos ++++++++++ %d", n);
+        osiThreadSleep(5000);
+    }
+    HILOG_INFO(HILOG_MODULE_APP, "DemoSdkTask end");
+}
+
+void DemoSdkMain(void)
+{
+    CmTraceLog(LOG_LEVEL_INFO, "ohos DemoSdkMain start");
+    osThreadAttr_t attr = {0};
+    attr.stack_size     = 1024;
+    attr.priority       = osPriorityNormal;
+    attr.name           = "DemoSdk";
+    if (osThreadNew((osThreadFunc_t)DemoSdkTask, NULL, &attr) == NULL) {
+        HILOG_ERROR(HILOG_MODULE_APP, "Failed to create DemoSdkTask\r\n");
+    }
+}
+
+APP_FEATURE_INIT(DemoSdkMain);

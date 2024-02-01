@@ -1,0 +1,29 @@
+From a0e6cbca9028c920716100bb71265a983cebbe4b Mon Sep 17 00:00:00 2001
+From: n028753 <jie.pan@archermind.com>
+Date: Tue, 11 Apr 2023 11:31:00 +0800
+Subject: [PATCH 3/3] =?UTF-8?q?=E5=B1=8F=E8=94=BDsetjmp?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Change-Id: I536ae53e744fe1ad6719a7132a26e45ea4bae658
+---
+ lite/hctest/include/unity_config.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/lite/hctest/include/unity_config.h b/lite/hctest/include/unity_config.h
+index d499d35..6fb1a38 100644
+--- a/lite/hctest/include/unity_config.h
++++ b/lite/hctest/include/unity_config.h
+@@ -26,7 +26,7 @@
+ #define UNITY_OUTPUT_CHAR HIVIEW_UartPutChar
+ 
+ 
+-#define UNITY_EXCLUDE_SETJMP_H
++// #define UNITY_EXCLUDE_SETJMP_H
+ #define UNITY_EXCLUDE_MATH_H
+ 
+ #endif /* UNITY_CONFIG_H */
+-- 
+2.25.1
+

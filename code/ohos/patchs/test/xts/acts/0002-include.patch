@@ -1,0 +1,30 @@
+From f63b2251a21c3a4fb5ea571eda13fcc686c591b0 Mon Sep 17 00:00:00 2001
+From: n028753 <jie.pan@archermind.com>
+Date: Thu, 6 Apr 2023 10:23:34 +0800
+Subject: [PATCH 2/2] =?UTF-8?q?=E4=BF=AE=E6=94=B9=E6=89=93=E5=8D=B0?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Change-Id: I1c73f9860fc8ad18975305cca45103a7079c28f7
+---
+ .../system_ability_manager_hal/utils/samgr_maintenance.c       | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/distributed_schedule_lite/system_ability_manager_hal/utils/samgr_maintenance.c b/distributed_schedule_lite/system_ability_manager_hal/utils/samgr_maintenance.c
+index 8ec156c194..98193e2916 100755
+--- a/distributed_schedule_lite/system_ability_manager_hal/utils/samgr_maintenance.c
++++ b/distributed_schedule_lite/system_ability_manager_hal/utils/samgr_maintenance.c
+@@ -18,6 +18,9 @@
+ #include "service_impl.h"
+ #include "samgr_lite_inner.h"
+ 
++#include <hiview_util.h>
++#define printf HIVIEW_UartPrintf
++
+ void SAMGR_PrintServices(void)
+ {
+     SamgrLiteImpl *samgr = GET_OBJECT(SAMGR_GetInstance(), SamgrLiteImpl, vtbl);
+-- 
+2.25.1
+

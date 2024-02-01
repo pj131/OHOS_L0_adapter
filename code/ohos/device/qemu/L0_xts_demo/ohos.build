@@ -1,0 +1,10 @@
+{
+  "parts": {
+    "device_L0_xts_demo": {
+      "module_list": [
+        "//device/qemu/L0_xts_demo:L0_xts_demo"
+      ]
+    }
+  },
+  "subsystem": "device_L0_xts_demo"
+}

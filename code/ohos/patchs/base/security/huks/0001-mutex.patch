@@ -1,0 +1,92 @@
+From a0b008507e3cb7cacb216b109512a49c0f83ed10 Mon Sep 17 00:00:00 2001
+From: n028753 <jie.pan@archermind.com>
+Date: Fri, 21 Apr 2023 17:58:51 +0800
+Subject: [PATCH 2/3] =?UTF-8?q?=E9=80=82=E9=85=8Dmutex=E6=8E=A5=E5=8F=A3?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Change-Id: I5269aa7dc8259904640404ba912ba8b86e937209
+---
+ utils/mutex/hks_mutex.c | 35 +++++++++++++++++++++++++----------
+ 1 file changed, 25 insertions(+), 10 deletions(-)
+
+diff --git a/utils/mutex/hks_mutex.c b/utils/mutex/hks_mutex.c
+index 02b063fe..d9935ef4 100644
+--- a/utils/mutex/hks_mutex.c
++++ b/utils/mutex/hks_mutex.c
+@@ -15,21 +15,36 @@
+ 
+ #include "hks_mutex.h"
+ 
+-#include <pthread.h>
++// #include <pthread.h>
+ #include <stddef.h>
+ 
+ #include "hks_mem.h"
+-#include "hks_template.h"
++#include "hks_template.h"
++
++#ifdef __cplusplus
++extern "C" {
++#endif
++#include "los_compiler.h"
++LITE_OS_SEC_TEXT_INIT UINT32 LOS_MuxCreate(UINT32 *muxHandle);
++UINT32 LOS_MuxPend(UINT32 muxHandle, UINT32 timeout);
++UINT32 LOS_MuxPost(UINT32 muxHandle);
++UINT32 LOS_MuxDelete(UINT32 *muxHandle);
++UINT64 LOS_TickCountGet();
++
++#ifdef __cplusplus
++}
++#endif
++
+ 
+ struct HksMutex {
+-    pthread_mutex_t mutex;
++    UINT32 mutex;
+ };
+ 
+ HksMutex *HksMutexCreate(void)
+ {
+     HksMutex *mutex = (HksMutex *)HksMalloc(sizeof(HksMutex));
+     if (mutex != NULL) {
+-        int result = pthread_mutex_init(&mutex->mutex, NULL);
++        int result = LOS_MuxCreate(&mutex->mutex);
+         if (result != 0) {
+             HksFree(mutex);
+             mutex = NULL;
+@@ -40,16 +55,16 @@ HksMutex *HksMutexCreate(void)
+ 
+ int32_t HksMutexLock(HksMutex *mutex)
+ {
+-    HKS_IF_NULL_RETURN(mutex, 1)
++    HKS_IF_NULL_RETURN(mutex, 1)
+ 
+-    return pthread_mutex_lock(&mutex->mutex);
++    return LOS_MuxPend(mutex->mutex, 0);
+ }
+ 
+ int32_t HksMutexUnlock(HksMutex *mutex)
+ {
+-    HKS_IF_NULL_RETURN(mutex, 1)
++    HKS_IF_NULL_RETURN(mutex, 1)
+ 
+-    return pthread_mutex_unlock(&mutex->mutex);
++    return LOS_MuxPost(mutex->mutex);
+ }
+ 
+ void HksMutexClose(HksMutex *mutex)
+@@ -58,6 +73,6 @@ void HksMutexClose(HksMutex *mutex)
+         return;
+     }
+ 
+-    pthread_mutex_destroy(&mutex->mutex);
++    LOS_MuxDelete(&mutex->mutex);
+     HksFree(mutex);
+-}
+\ No newline at end of file
++}
+-- 
+2.25.1
+

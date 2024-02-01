@@ -1,0 +1,92 @@
+{
+  "product_name": "L0_xts_demo",
+  "ohos_version": "OpenHarmony 1.0",
+  "type":"mini",
+  "version": "3.0",
+  "device_company": "qemu",
+  "board": "L0_xts_demo",
+  "kernel_type": "liteos_m",
+  "kernel_version": "3.0.0",
+  "subsystems": [
+    {
+      "subsystem": "hiviewdfx",
+      "components": [
+        { "component": "hievent_lite", "features":[] },
+        { "component": "hiview_lite", "features":[] },
+        { "component": "hilog_lite", "features":[] }
+      ]
+    },
+    {
+      "subsystem": "bundlemanager",
+      "components": [
+        { "component": "bundle_framework_lite", "features":[] }
+      ]
+    },
+    {
+      "subsystem": "updater",
+      "components": [
+        { "component": "ota_lite", "features":[] }
+      ]
+    },
+    {
+      "subsystem": "global",
+      "components": [
+        { "component": "resource_management_lite", "features":[] }
+      ]
+    },
+    {
+      "subsystem": "systemabilitymgr",
+      "components": [
+        { "component": "samgr_lite", "features":[] }
+      ]
+    },
+    {
+      "subsystem": "startup",
+      "components": [
+        { "component": "bootstrap_lite", "features":[] },
+        {
+          "component": "init_lite",
+          "features": [
+            "enable_ohos_startup_init_feature_begetctl_liteos = true"
+          ]
+        },
+        { "component": "syspara_lite", "features": [] }
+      ]
+    },
+    {
+      "subsystem": "security",
+      "components": [
+        { "component": "huks", "features":
+          [
+            "huks_use_lite_storage = true",
+            "huks_use_hardware_root_key = true",
+            "huks_config_file = \"hks_config_lite.h\""
+          ]
+        }
+      ]
+    },
+    {
+      "subsystem": "xts",
+      "components": [
+        { "component": "xts_acts", "features": [] },
+        { "component": "xts_tools", "features": [] }
+      ]
+    },
+    {
+      "subsystem": "thirdparty",
+      "components": [
+        { "component": "bounds_checking_function", "features": [] },
+        { "component": "thirdparty_jerryscript", "features": [] },
+        { "component": "cjson", "features": [] }
+      ]
+    },
+    {
+      "subsystem": "commonlibrary",
+      "components": [
+        { "component": "file", "features": [] }
+      ]
+    }
+  ],
+  "third_party_dir": "",
+  "product_adapter_dir": "//vendor/ohemu/L0_xts_demo/hals"
+}

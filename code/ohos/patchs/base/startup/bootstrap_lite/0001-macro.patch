@@ -1,0 +1,41 @@
+From a6d510b25438e69c3d29161fe43041271eec99d7 Mon Sep 17 00:00:00 2001
+From: n028753 <jie.pan@archermind.com>
+Date: Tue, 28 Mar 2023 16:57:42 +0800
+Subject: [PATCH] =?UTF-8?q?=E5=8F=96=E6=B6=88=E9=87=8D=E5=A4=8D=E8=B0=83?=
+ =?UTF-8?q?=E7=94=A8?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Change-Id: Ifc3e63eb4f10c6d53deb2889ae8b45533b0b0c11
+---
+ services/source/core_main.h | 8 --------
+ 1 file changed, 8 deletions(-)
+
+diff --git a/services/source/core_main.h b/services/source/core_main.h
+index 7e1d65d..6da7ff0 100644
+--- a/services/source/core_main.h
++++ b/services/source/core_main.h
+@@ -117,19 +117,11 @@ extern "C" {
+ #define SYS_INIT(name)     \
+     do {                   \
+         SYS_CALL(name, 0); \
+-        SYS_CALL(name, 1); \
+-        SYS_CALL(name, 2); \
+-        SYS_CALL(name, 3); \
+-        SYS_CALL(name, 4); \
+     } while (0)
+ 
+ #define MODULE_INIT(name)     \
+     do {                      \
+         MODULE_CALL(name, 0); \
+-        MODULE_CALL(name, 1); \
+-        MODULE_CALL(name, 2); \
+-        MODULE_CALL(name, 3); \
+-        MODULE_CALL(name, 4); \
+     } while (0)
+ 
+ #else
+-- 
+2.25.1
+
