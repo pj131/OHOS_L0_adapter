@@ -1,0 +1,1 @@
+# OHOS_L0_adapter
