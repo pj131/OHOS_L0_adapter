@@ -1,0 +1,112 @@
+From bb6d58ebc8dffaaed789b9945dcbc61c116a07ed Mon Sep 17 00:00:00 2001
+From: n028753 <jie.pan@archermind.com>
+Date: Tue, 18 Apr 2023 17:02:26 +0800
+Subject: [PATCH] fix bug,modify adapter
+
+Change-Id: Ic48720f7dd86c47a1026b07631f23483af3fc6be
+---
+ frameworks/bundle_lite/BUILD.gn               |  1 -
+ services/bundlemgr_lite/BUILD.gn              |  2 ++
+ services/bundlemgr_lite/src/bundle_map.cpp    |  4 ++--
+ .../src/gt_bundle_manager_service.cpp         |  2 +-
+ utils/bundle_lite/adapter.h                   | 23 ++++++++++++++++---
+ 5 files changed, 25 insertions(+), 7 deletions(-)
+
+diff --git a/frameworks/bundle_lite/BUILD.gn b/frameworks/bundle_lite/BUILD.gn
+index 6999eec..d1f6975 100644
+--- a/frameworks/bundle_lite/BUILD.gn
++++ b/frameworks/bundle_lite/BUILD.gn
+@@ -117,7 +117,6 @@ lite_library("bundle") {
+ 
+   if (board_toolchain_type != "iccarm") {
+     cflags = [
+-      "-fPIC",
+       "-Wall",
+       "-Wno-format",
+     ]
+diff --git a/services/bundlemgr_lite/BUILD.gn b/services/bundlemgr_lite/BUILD.gn
+index d3c2e55..92dec59 100644
+--- a/services/bundlemgr_lite/BUILD.gn
++++ b/services/bundlemgr_lite/BUILD.gn
+@@ -48,6 +48,8 @@ if (ohos_kernel_type == "liteos_m") {
+       ]
+     }
+ 
++    # defines += ["__LITEOS_M__"]
++
+     deps = [
+       "${appexecfwk_lite_path}/frameworks/bundle_lite:bundle",
+       "//base/global/resource_management_lite/frameworks/resmgr_lite:global_resmgr",
+diff --git a/services/bundlemgr_lite/src/bundle_map.cpp b/services/bundlemgr_lite/src/bundle_map.cpp
+index 767ae11..012c238 100755
+--- a/services/bundlemgr_lite/src/bundle_map.cpp
++++ b/services/bundlemgr_lite/src/bundle_map.cpp
+@@ -31,7 +31,7 @@ const int32_t GET_BUNDLE_WITH_ABILITIES = 1;
+ static pthread_mutex_t g_bundleListMutex = PTHREAD_MUTEX_INITIALIZER;
+ #else
+ const int32_t BUNDLELIST_MUTEX_TIMEOUT = 2000;
+-static osMutexId_t g_bundleListMutex;
++UINT32 g_bundleListMutex;
+ #endif
+ 
+ BundleMap::BundleMap()
+@@ -39,7 +39,7 @@ BundleMap::BundleMap()
+ #ifdef OHOS_APPEXECFWK_BMS_BUNDLEMANAGER
+     pthread_mutex_init(&g_bundleListMutex, nullptr);
+ #else
+-    g_bundleListMutex = osMutexNew(reinterpret_cast<osMutexAttr_t *>(NULL));
++    MutexCreate(&g_bundleListMutex);
+ #endif
+     bundleInfos_ = new List<BundleInfo *>();
+ }
+diff --git a/services/bundlemgr_lite/src/gt_bundle_manager_service.cpp b/services/bundlemgr_lite/src/gt_bundle_manager_service.cpp
+index fd9f5da..c3f11d4 100644
+--- a/services/bundlemgr_lite/src/gt_bundle_manager_service.cpp
++++ b/services/bundlemgr_lite/src/gt_bundle_manager_service.cpp
+@@ -1149,7 +1149,7 @@ void GtManagerService::FreePreAppInfo(const PreAppList *list)
+ extern "C" {
+ static char *g_currentBundle = nullptr;
+ const int32_t BUNDLENAME_MUTEX_TIMEOUT = 2000;
+-static osMutexId_t g_currentBundleMutex;
++static UINT32 g_currentBundleMutex;
+ 
+ void SetCurrentBundle(const char *name)
+ {
+diff --git a/utils/bundle_lite/adapter.h b/utils/bundle_lite/adapter.h
+index 2039c89..60d3424 100644
+--- a/utils/bundle_lite/adapter.h
++++ b/utils/bundle_lite/adapter.h
+@@ -76,10 +76,27 @@ const unsigned int RETRY_TIMES = 10;
+         } \
+     } while (0)
+ 
++
++#ifdef __cplusplus
++extern "C" {
++#endif
++#include "los_compiler.h"
++LITE_OS_SEC_TEXT_INIT UINT32 LOS_MuxCreate(UINT32 *muxHandle);
++UINT32 LOS_MuxPend(UINT32 muxHandle, UINT32 timeout);
++UINT32 LOS_MuxPost(UINT32 muxHandle);
++UINT32 LOS_MuxDelete(UINT32 *muxHandle);
++UINT64 LOS_TickCountGet();
++
++#ifdef __cplusplus
++}
++#endif
++ 
++
+ #define RecordAbiityInfoEvt(code1)
+-#define MutexDelete(a) osMutexDelete(a)
+-#define MutexAcquire(a, b) osMutexAcquire(a, b)
+-#define MutexRelease(a) osMutexRelease(a)
++#define MutexCreate(a) LOS_MuxCreate(a)
++#define MutexDelete(a) LOS_MuxDelete(a)
++#define MutexAcquire(a, b) LOS_MuxPend(*a, b)
++#define MutexRelease(a) LOS_MuxPost(*a)
+ #define SvrFree AdapterFree
+ #define SvrMalloc AdapterMalloc
+ 
+-- 
+GitLab
+

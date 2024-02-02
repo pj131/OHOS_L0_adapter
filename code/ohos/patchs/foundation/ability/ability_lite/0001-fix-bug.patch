@@ -1,0 +1,25 @@
+From da47b08a22ec8ef1d76219cd35b218935f8029cf Mon Sep 17 00:00:00 2001
+From: n028753 <jie.pan@archermind.com>
+Date: Tue, 18 Apr 2023 16:55:00 +0800
+Subject: [PATCH] fix bug
+
+Change-Id: I9556ac5ca718e8126da76d518e51b659b8487c1a
+---
+ frameworks/want_lite/BUILD.gn | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/frameworks/want_lite/BUILD.gn b/frameworks/want_lite/BUILD.gn
+index 72adf3f..269d786 100644
+--- a/frameworks/want_lite/BUILD.gn
++++ b/frameworks/want_lite/BUILD.gn
+@@ -22,7 +22,6 @@ static_library("want") {
+   cflags = []
+   if (board_toolchain_type != "iccarm") {
+     cflags += [
+-      "-fPIC",
+       "-Wall",
+     ]
+   }
+-- 
+GitLab
+
