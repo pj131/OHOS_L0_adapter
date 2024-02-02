@@ -1,10 +1,8 @@
 # 一种OpenHarmony L0系统适配方案
 
-[TOC]
-
 ## 1. 简介
 
-本文将介绍在不改变原有系统基础框架的基础上，一种OpenHarmony（以下称OHOS）L0系统适配方案。本文档使用OHOS release 3.2版本。
+本文将介绍在不改变原有系统基础框架的基础上，一种OpenHarmony L0系统适配方案。本文档使用OpenHarmony release 3.2版本。
 
 ## 2. 方案设计
 
@@ -18,28 +16,28 @@
 | 编译系统 | CMake                                                        |
 | 功能模块 | bootloader、at、ota、net、audio、fs、mbedtls、rpc、tts、unity等 |
 
-按照OHOS的官方适配指导，适配工作需要将OS由RTOS改为Liteos-m，并移植原生所有功能模块和镜像打包功能。如果采用该方案，将面临诸多困难：编译系统需要重写为gn+ninja、原始底层库和功能全面移植，这样一来打乱了原始的编译习惯，编译脚本需要重新编写，需要适配新的OS接口、已经完成的功能需要重新调试测试。过多的改动，意味着无法聚焦项目的主要功能点，这种方案工作量大，难度大，工期无法保障。
+按照OpenHarmony的官方适配指导，适配工作需要将内核由RTOS改为Liteos-m，并移植原生所有功能模块和镜像打包功能。如果采用该方案，将面临诸多困难：编译系统需要重写为gn+ninja、原始底层库和功能全面移植，这样一来打乱了原始的编译习惯，编译脚本需要重新编写，需要适配新的OS接口、已经完成的功能需要重新调试测试。过多的改动，意味着无法聚焦项目的主要功能点，这种方案工作量大，难度大，工期无法保障。
 
-OHOS的L0系统编译过程是，首先将各模块编译为静态库，再链接为应用程序，最后打包烧录入硬件。系统运行时，只有单一进程，各个不同的任务以多个线程运行。结合原生代码和OHOS的特点，最终采用的适配方案如下：
+OpenHarmony的L0系统编译过程是，首先将各模块编译为静态库，再链接为应用程序，最后打包烧录入硬件。系统运行时，只有单一进程，各个不同的任务以多个线程运行。结合原生代码和OpenHarmony的特点，最终采用的适配方案如下：
 
-- 使用原生代码的交叉编译工具链编译OHOS为静态库，将静态库集成到原生代码中；
+- 使用原生代码的交叉编译工具链编译OpenHarmony为静态库，将静态库集成到原生代码中；
 
-- OHOS中不编译liteos-m内核，使用原生代码的RTOS内核；
+- OpenHarmony中不编译liteos-m内核，使用原生代码的RTOS内核；
 
 - 不改变原生代码的编译系统和打包系统；
-- 原生代码中新增适配代码，以提供OHOS需要的接口。
+- 原生代码中新增适配代码，以提供OpenHarmony需要的接口。
 
-该方案在最小改动原系统的前提下，完成OHOS的适配。
+该方案在最小改动原系统的前提下，完成OpenHarmony的适配。
 
 整体软件框架的设计如下：
 
-![image-20240126151328299](images/image-20240126151328299.png)
+![image-20240126151328299](D:\backup\n028753\AppData\Roaming\Typora\typora-user-images\image-20240126151328299.png)
 
-方案保持了原始框架的大部分功能不改变，新增OHOS的模块功能和其他项目需求功能，修改或升级部分原生功能（FreeRTOS、mbedtls等）。
+方案保持了原始框架的大部分功能不改变，新增OpenHarmony的模块功能和其他项目需求功能，修改或升级部分原生功能（FreeRTOS、mbedtls等）。
 
-## 4. OHOS编译
+## 3. OpenHarmony编译
 
-### 4.1 创建虚拟设备编译
+### 3.1 创建虚拟设备编译
 
 新建配置vendor/ohemu/L0_xts_demo和device/qemu/L0_xts_demo。
 
@@ -57,7 +55,7 @@ vendor/ohemu/L0_xts_demo/
 │   ├── no_kernel_test.config
 │   └── release.config
 ├── LICENSE
-├── ohos.build
+├── OpenHarmony.build
 └── qemu_run.sh
 ```
 
@@ -72,21 +70,21 @@ device/qemu/L0_xts_demo/
 │   ├── board
 │   ├── BUILD.gn
 │   └── config.gni
-├── ohos.build
+├── OpenHarmony.build
 ├── README.md
 └── README_zh.md
 ```
 
 
 
-### 4.2 子系统配置
+### 3.2 子系统配置
 
 vendor/ohemu/L0_xts_demo/config.json文件包含了所有必须的子系统配置，如下：
 
 ```json
 {
   "product_name": "L0_xts_demo",
-  "ohos_version": "OpenHarmony 1.0",
+  "OpenHarmony_version": "OpenHarmony 1.0",
   "type":"mini",
   "version": "3.0",
   "device_company": "qemu",
@@ -133,7 +131,7 @@ vendor/ohemu/L0_xts_demo/config.json文件包含了所有必须的子系统配�
         {
           "component": "init_lite",
           "features": [
-            "enable_ohos_startup_init_feature_begetctl_liteos = true"
+            "enable_OpenHarmony_startup_init_feature_begetctl_liteos = true"
           ]
         },
         { "component": "syspara_lite", "features": [] }
@@ -178,7 +176,7 @@ vendor/ohemu/L0_xts_demo/config.json文件包含了所有必须的子系统配�
 }
 ```
 
-### 4.3 工具链配置
+### 3.3 工具链配置
 
 device/qemu/L0_xts_demo/liteos_m/config.gni包含了板级编译配置，根据原生编译系统的编译设置来修改，尽量保持一致，如下：
 
@@ -196,8 +194,8 @@ board_cpu = "cortex-a5"
 board_arch = ""
 
 # Toolchain name used for system compiling.
-# E.g. gcc-arm-none-eabi, arm-linux-harmonyeabi-gcc, ohos-clang,  riscv32-unknown-elf.
-# Note: The default toolchain is "ohos-clang". It's not mandatory if you use the default toolchain.
+# E.g. gcc-arm-none-eabi, arm-linux-harmonyeabi-gcc, OpenHarmony-clang,  riscv32-unknown-elf.
+# Note: The default toolchain is "OpenHarmony-clang". It's not mandatory if you use the default toolchain.
 board_toolchain = "arm-none-eabi-gcc"
 
 use_board_toolchain = true
@@ -262,7 +260,7 @@ board_ld_flags += [
 # Board related headfiles search path.
 board_include_dirs = [ "//utils/native/lite/include" ]
 
-# Board adapter dir for OHOS components.
+# Board adapter dir for OpenHarmony components.
 board_adapter_dir = "//device/qemu/L0_xts_demo/driver"
 
 # Sysroot path.
@@ -272,7 +270,7 @@ board_configed_sysroot = ""
 storage_type = "spinor"
 ```
 
-### 4.4 编译命令
+### 3.4 编译命令
 
 ```shell
 python3 ./build.py -p L0_xts_demo -f -b debug --gn-args build_xts=true
@@ -280,35 +278,35 @@ python3 ./build.py -p L0_xts_demo -f -b debug --gn-args build_xts=true
 
 编译出的静态库位于**out/L0_xts_demo/L0_xts_demo/libs**
 
-### 4.5 优化剪裁
+### 3.5 优化剪裁
 
-由于是L0系统，没有必要下载完整OHOS源码包，所以对manifest和prebuild进行剪裁，只下载必须的软件和源码。
+由于是L0系统，没有必要下载完整OpenHarmony源码包，所以对manifest和prebuild进行剪裁，只下载必须的软件和源码。
 
 修改**build/prebuilts_download_config.json**，只保留gn、ninja和python。
 
-修改.repo/manifests/ohos/ohos.xml，删除不需要的包，剪裁后仅剩50个包。
+修改**.repo/manifests/ohos/ohos.xml**，删除不需要的包，剪裁后仅剩50个包。
 
-### 4.6 集成
+### 3.6 集成
 
-将编译后的静态库拷贝到原生编译系统中，并编写demo程序，参与编译。
+将编译后的静态库拷贝到原生编译系统中，并编写demo程序，进行编译。
 
-#### 4.6.1 编写demo
+#### 3.6.1 编写demo
 
-OHOS的demo分为两个单元，ohos_main.c和ohos_demo.c。
+OpenHarmony的demo分为两个单元，OpenHarmony_main.c和OpenHarmony_demo.c。
 
-- ohos_main.c负责启动ohos，
-- ohos_demo.c为应用程序，循环打印hilog日志。
+- main.c负责启动OpenHarmony，
+- demo.c为应用程序，循环打印hilog日志。
 
-ohos_main.c主要代码如下：
+main.c主要代码如下：
 
 ```c
-//ohos_main.c
+//main.c
 extern void OHOS_SystemInit();
 static bool ohos_started = false;
-void ohos_start()
+static void ohos_start()
 {
     if (ohos_started) {
-        return 0;
+        return;
     }
     ohos_started = true;
     OHOS_SystemInit();
@@ -337,7 +335,7 @@ void appimg_exit(void)
 }
 ```
 
-ohos_demo.c主要代码如下：
+demo.c主要代码如下：
 
 ```c
 static void DemoSdkTask(void* arg)
@@ -345,7 +343,7 @@ static void DemoSdkTask(void* arg)
     (void)arg;
     HILOG_INFO(HILOG_MODULE_APP, "DemoSdkTask start , arg:%p", arg);
     for (int n = 0; n < 1000; n++) {
-        HILOG_INFO(HILOG_MODULE_APP, "DemoSdkTask hello ohos ++++++++++ %d", n);
+        HILOG_INFO(HILOG_MODULE_APP, "DemoSdkTask hello OpenHarmony ++++++++++ %d", n);
         osiThreadSleep(5000);
     }
     HILOG_INFO(HILOG_MODULE_APP, "DemoSdkTask end");
@@ -365,14 +363,14 @@ void DemoSdkMain(void)
 APP_FEATURE_INIT(DemoSdkMain);
 ```
 
-#### 4.6.2 编译demo
+#### 3.6.2 编译demo
 
 创建CMakeFile.txt文件。
 
-定义OHOS的头文件包含目录及库文件：
+定义OpenHarmony的头文件包含目录及库文件：
 
 ```cmake
-set(OHOS_INCLUDE_PATHS 
+set(OpenHarmony_INCLUDE_PATHS 
     base/hiviewdfx/hilog_lite/interfaces/native/kits/hilog_lite 
     commonlibrary/utils_lite/include 
     base/hiviewdfx/hilog_lite/command 
@@ -388,120 +386,120 @@ set(OHOS_INCLUDE_PATHS
     commonlibrary/utils_lite/include
 )
 
-set(OHOS_LIBS "${ohos_lib_path}/libbegetutil.a \
-${ohos_lib_path}/libbootstrap.a \
-${ohos_lib_path}/libhal_file_static.a \
-${ohos_lib_path}/libhal_sysparam.a \
-${ohos_lib_path}/libhievent_lite_static.a \
-${ohos_lib_path}/libhilog_lite_static.a \
-${ohos_lib_path}/libhilog_static.a \
-${ohos_lib_path}/libhiview_lite_static.a \
-${ohos_lib_path}/libinit_log.a \
-${ohos_lib_path}/libinit_utils.a \
-${ohos_lib_path}/libnative_file.a \
-${ohos_lib_path}/libparam_client_lite.a \
-${ohos_lib_path}/libsamgr.a \
-${ohos_lib_path}/libsamgr_adapter.a \
-${ohos_lib_path}/libsamgr_source.a \
-${ohos_lib_path}/libsec_static.a \
+set(OpenHarmony_LIBS "${OpenHarmony_lib_path}/libbegetutil.a \
+${OpenHarmony_lib_path}/libbootstrap.a \
+${OpenHarmony_lib_path}/libhal_file_static.a \
+${OpenHarmony_lib_path}/libhal_sysparam.a \
+${OpenHarmony_lib_path}/libhievent_lite_static.a \
+${OpenHarmony_lib_path}/libhilog_lite_static.a \
+${OpenHarmony_lib_path}/libhilog_static.a \
+${OpenHarmony_lib_path}/libhiview_lite_static.a \
+${OpenHarmony_lib_path}/libinit_log.a \
+${OpenHarmony_lib_path}/libinit_utils.a \
+${OpenHarmony_lib_path}/libnative_file.a \
+${OpenHarmony_lib_path}/libparam_client_lite.a \
+${OpenHarmony_lib_path}/libsamgr.a \
+${OpenHarmony_lib_path}/libsamgr_adapter.a \
+${OpenHarmony_lib_path}/libsamgr_source.a \
+${OpenHarmony_lib_path}/libsec_static.a \
 ")
-set(OHOS_FLAGS "-Wl,--whole-archive ${OHOS_LIBS} -Wl,--no-whole-archive")
+set(OpenHarmony_FLAGS "-Wl,--whole-archive ${OpenHarmony_LIBS} -Wl,--no-whole-archive")
 ```
 
 编译demo程序：
 
 ```cmake
-set(target ohos_demo)
-add_appimg_flash_example(${target} ohos-main.c ohos-demo.c)
+set(target OpenHarmony_demo)
+add_appimg_flash_example(${target} OpenHarmony-main.c OpenHarmony-demo.c)
 include_directories(${INC_DIR})
 include_directories(${INC_DIR}/system)
 
-target_compile_definitions(${target} PRIVATE OSI_LOG_TAG=LOG_TAG_OHOS)
+target_compile_definitions(${target} PRIVATE OSI_LOG_TAG=LOG_TAG_OpenHarmony)
 
-foreach(inc ${OHOS_INCLUDE_PATHS})
-    include_directories(${ohos_inc_path}/${inc})
+foreach(inc ${OpenHarmony_INCLUDE_PATHS})
+    include_directories(${OpenHarmony_inc_path}/${inc})
 endforeach()
-set_target_properties(${target} PROPERTIES LINK_FLAGS "${OHOS_FLAGS}")
+set_target_properties(${target} PROPERTIES LINK_FLAGS "${OpenHarmony_FLAGS}")
 ```
 
-编译后生成镜像文件ohos_demo.img
+编译后生成镜像文件OpenHarmony_demo.img
 
-#### 4.6.3 编译xts
+#### 3.6.3 编译xts
 
 生成多个xts镜像：
 
 ```cmake
 ######################################XTS start###########################
-set(OHOS_LIBS_XTS "")
-macro(add_target_ohos_xts)
+set(OpenHarmony_LIBS_XTS "")
+macro(add_target_OpenHarmony_xts)
     foreach(arg ${ARGN})
-        set(OHOS_XTS_LIBS "${ohos_lib_path}/libhctest.a \
-            ${ohos_lib_path}/libmodule_${arg}.a \
+        set(OpenHarmony_XTS_LIBS "${OpenHarmony_lib_path}/libhctest.a \
+            ${OpenHarmony_lib_path}/libmodule_${arg}.a \
             ")
-        set(target ohos_xts_${arg})
-        add_appimg_flash_example(${target} ohos-main.c)
+        set(target OpenHarmony_xts_${arg})
+        add_appimg_flash_example(${target} OpenHarmony-main.c)
         include_directories(${INC_DIR})
-        target_compile_definitions(${target} PRIVATE OSI_LOG_TAG=LOG_TAG_OHOS)
-        set(OHOS_FLAGS "-Wl,--whole-archive ${OHOS_LIBS} ${OHOS_LIBS_XTS} ${OHOS_XTS_LIBS} -Wl,--no-whole-archive")
-        set_target_properties(${target} PROPERTIES LINK_FLAGS "${OHOS_FLAGS}")
+        target_compile_definitions(${target} PRIVATE OSI_LOG_TAG=LOG_TAG_OpenHarmony)
+        set(OpenHarmony_FLAGS "-Wl,--whole-archive ${OpenHarmony_LIBS} ${OpenHarmony_LIBS_XTS} ${OpenHarmony_XTS_LIBS} -Wl,--no-whole-archive")
+        set_target_properties(${target} PROPERTIES LINK_FLAGS "${OpenHarmony_FLAGS}")
     endforeach()
 endmacro()
 
 ###########################################################################
 #ActsBootstrapTest ActsDfxFuncTest ActsHieventLiteTest ActsUtilsFileTest
 ###########################################################################
-add_target_ohos_xts(ActsBootstrapTest ActsDfxFuncTest ActsHieventLiteTest ActsUtilsFileTest)
+add_target_OpenHarmony_xts(ActsBootstrapTest ActsDfxFuncTest ActsHieventLiteTest ActsUtilsFileTest)
 
 ###########################################################################
 #ActsSamgrTest
 ###########################################################################
-set(OHOS_LIBS_XTS "${ohos_lib_path}/libbroadcast.a")
-add_target_ohos_xts(ActsSamgrTest)
+set(OpenHarmony_LIBS_XTS "${OpenHarmony_lib_path}/libbroadcast.a")
+add_target_OpenHarmony_xts(ActsSamgrTest)
 
 ###########################################################################
 #ActsParameterTest
 ###########################################################################
-set(OHOS_LIBS_XTS "${ohos_lib_path}/libinithook.a")
-add_target_ohos_xts(ActsParameterTest)
+set(OpenHarmony_LIBS_XTS "${OpenHarmony_lib_path}/libinithook.a")
+add_target_OpenHarmony_xts(ActsParameterTest)
 
 ###########################################################################
 #ActsUpdaterFuncTest
 ###########################################################################
-set(OHOS_LIBS_XTS "${ohos_lib_path}/libhal_update_static.a \
-    ${ohos_lib_path}/libhota.a \
+set(OpenHarmony_LIBS_XTS "${OpenHarmony_lib_path}/libhal_update_static.a \
+    ${OpenHarmony_lib_path}/libhota.a \
     ")
-add_target_ohos_xts(ActsUpdaterFuncTest)
+add_target_OpenHarmony_xts(ActsUpdaterFuncTest)
 
 ###########################################################################
 #ActsHuksHalFunctionTest
 ###########################################################################
-set(OHOS_LIBS_XTS "${ohos_lib_path}/libhuks_3.0_sdk.a \
-    ${ohos_lib_path}/libhuks_test_common.a \
+set(OpenHarmony_LIBS_XTS "${OpenHarmony_lib_path}/libhuks_3.0_sdk.a \
+    ${OpenHarmony_lib_path}/libhuks_test_common.a \
     ")
-add_target_ohos_xts(ActsHuksHalFunctionTest)
+add_target_OpenHarmony_xts(ActsHuksHalFunctionTest)
 
 ###########################################################################
 #ActsBundleMgrTest
 ###########################################################################
-set(OHOS_LIBS_XTS "${ohos_lib_path}/libbundle.a \
-    ${ohos_lib_path}/libbundlems.a \
-    ${ohos_lib_path}/libcjson_static.a \
-    ${ohos_lib_path}/libwant.a \
-    ${ohos_lib_path}/libace_lite.a \
-    ${ohos_lib_path}/libglobal_resmgr.a \
+set(OpenHarmony_LIBS_XTS "${OpenHarmony_lib_path}/libbundle.a \
+    ${OpenHarmony_lib_path}/libbundlems.a \
+    ${OpenHarmony_lib_path}/libcjson_static.a \
+    ${OpenHarmony_lib_path}/libwant.a \
+    ${OpenHarmony_lib_path}/libace_lite.a \
+    ${OpenHarmony_lib_path}/libglobal_resmgr.a \
     ")
-add_target_ohos_xts(ActsBundleMgrTest)
+add_target_OpenHarmony_xts(ActsBundleMgrTest)
 ```
 
-#### 4.6.4 链接
+#### 3.6.4 链接
 
-修改ld文件，主要是修改text段，新增OHOS的自定义段设置：
+修改ld文件，主要是修改text段，新增OpenHarmony的自定义段设置：
 
 ```c
     .text ALIGNMENT : {
         __text_start = .;
         *(DEF_RO)
-        /*ohos*/
+        /*OpenHarmony*/
        _hdf_drivers_start = .;
        KEEP(*(.hdf.driver))
        _hdf_drivers_end = .; /* define a section for hdf driver */
@@ -583,23 +581,23 @@ add_target_ohos_xts(ActsBundleMgrTest)
 
 
 
-## 5. 原生系统修改
+## 4. 原生系统修改
 
-在原生代码中升级模块或新增OHOS调用的接口。
+在原生代码中升级模块或新增OpenHarmony调用的接口。
 
-### 5.1 升级RTOS
+### 4.1 升级RTOS
 
-由于不支持OHOS适配接口，FreeRTOS内核从版本10.0.1升级到版本v10.3.1，适配其hal层和osi层接口。
+由于不支持OpenHarmony适配接口，FreeRTOS内核从版本10.0.1升级到版本v10.3.1，适配其hal层和osi层接口。
 
 FreeRTOS源码来自于官网地址：https://github.com/FreeRTOS/FreeRTOS
 
-### 5.2 升级mbedtls
+### 4.2 升级mbedtls
 
-因为原生代码的版本较低，所以拷贝OHOS中的mbedtls源码覆盖到原生系统中，版本为3.1.0。在OHOS中不编译三方库mbedtls。
+因为原生代码的版本较低，所以拷贝OpenHarmony中的mbedtls源码覆盖到原生系统中，版本为3.1.0。在OpenHarmony中不编译三方库mbedtls。
 
-修改CMakeFile.txt和config.h，打开OHOS和原生系统需要的功能开关。
+修改CMakeFile.txt和config.h，打开OpenHarmony和原生系统需要的功能开关。
 
-### 5.3 新增cmsis接口
+### 4.3 新增cmsis接口
 
 原生系统kernel中新增cmsis目录，结构如下：
 
@@ -608,12 +606,12 @@ FreeRTOS源码来自于官网地址：https://github.com/FreeRTOS/FreeRTOS
 ├── freertos
 │   ├── cmsis
 │   │   ├── Include                            #拷贝自CMSIS-FreeRTOS中的CMSIS/RTOS2/FreeRTOS/Include
-│   │   │   ├── cmsis_os2.h                    #该文件来自于ohos的third_party/cmsis/CMSIS/RTOS2/Include/cmsis_os2.h
+│   │   │   ├── cmsis_os2.h                    #该文件来自于OpenHarmony的third_party/cmsis/CMSIS/RTOS2/Include/cmsis_os2.h
 │   │   │   ├── cmsis_os.h
 │   │   │   ├── freertos_evr.h
 │   │   │   ├── freertos_mpool.h
 │   │   │   ├── freertos_os2.h
-│   │   │   └── os_tick.h                      #该文件来自于ohos的third_party/cmsis/CMSIS/RTOS2/Include/os_tick.h
+│   │   │   └── os_tick.h                      #该文件来自于OpenHarmony的third_party/cmsis/CMSIS/RTOS2/Include/os_tick.h
 │   │   └── Source
 │   │       ├── ARM
 │   │       ├── cmsis_os1.c
@@ -627,9 +625,9 @@ cmsis源码来自于开源项目CMSIS-FreeRTOS，地址：https://github.com/ARM
 
 修改部分源码，并修改kernel的CMakeFile.txt，将**freertos/cmsis/Source/cmsis_os2.c**加入编译。
 
-### 5.4 新增打印接口
+### 4.4 新增打印接口
 
-适配打印接口，这里可以有多种灵活选择，打印到串口、记录到文件等。
+适配打印接口，这里可以有多种灵活功能，比如打印到串口、保存文件、数据库等。
 
 ```c
 void printf_adapter(const char* fmt, ...);
@@ -637,7 +635,7 @@ void putchar_adapter(int ch);
 void vprintf_adapter(const char* fmt, va_list ap);
 ```
 
-### 5.5 新增文件系统接口
+### 4.5 新增文件系统接口
 
 适配文件系统接口：
 
@@ -650,9 +648,9 @@ off_t _lseek(int fd, off_t offset, int whence);
 int _unlink(const char* path);
 ```
 
-需要注意的是，OHOS要求打开文件最多为32个，这里需要控制通过**_open()**接口打开的文件总数不能超过32个。
+需要注意的是，OpenHarmony要求打开文件最多为32个，这里需要控制通过**_open()**接口打开的文件总数不能超过32个。
 
-### 5.6 新增posix接口
+### 4.6 新增posix接口
 
 适配缺失的posix接口：
 
@@ -663,7 +661,7 @@ unsigned sleep(unsigned seconds);
 void _fini(void);
 ```
 
-### 5.7 新增liteos接口
+### 4.7 新增liteos接口
 
 liteos-m中调用的接口
 
@@ -681,7 +679,7 @@ UINT64 LOS_TickCountGet();
 void* osThreadGetArgument(void);
 ```
 
-### 5.8 其他接口
+### 4.8 其他接口
 
 适配缺失的其他接口
 
@@ -694,17 +692,17 @@ void RefreshAllServiceTimeStamp(void);
 int HiLogWriteInternal(const char* buffer, size_t bufLen);
 ```
 
-## 6. OHOS修改
+## 5. OpenHarmony修改
 
-### 6.1 三方库未编译
+### 5.1 三方库
 
-修改third_party/bounds_checking_function/BUILD.gn
+修改**third_party/bounds_checking_function/BUILD.gn**
 
 ```properties
-if (defined(ohos_lite)) {
-#注意，我们并不是真正的liteos_m内核，所以，这里需要编译生成libsec_static静态库
+if (defined(OpenHarmony_lite)) {
+#注意，这里需要编译生成libsec_static静态库
   # When the kernel is liteos_m, use //kernel/liteos_m/kal/libsec/BUILD.gn to compile.
-  if (ohos_kernel_type == "liteos_m") {
+  if (OpenHarmony_kernel_type == "liteos_m") {
     # group("libsec_static") {
     # }
   } else {
@@ -732,24 +730,24 @@ if (defined(ohos_lite)) {
 }
 ```
 
-### 6.2 修改hiview_lite
+### 5.2 修改hiview_lite
 
-修改gn
+修改文件**base/hiviewdfx/hiview_lite/BUILD.gn**
 
 ```properties
 #base/hiviewdfx/hiview_lite/BUILD.gn
 declare_args() {
 #改为无缓存，直接输出到串口
-  ohos_hiviewdfx_hiview_lite_output_option = 0
-  ohos_hiviewdfx_hilog_lite_level = 1
-  ohos_hiviewdfx_hilog_lite_level_release = 3
-  ohos_hiviewdfx_hilog_lite_log_switch = 1
-  ohos_hiviewdfx_dump_lite_dump_switch = 0
-  ohos_hiviewdfx_hievent_lite_event_switch = 1
-  ohos_hiviewdfx_hiview_lite_output_module = -1
-  ohos_hiviewdfx_hiview_lite_dir = ""
-  ohos_hiviewdfx_hiview_lite_stack_size = 4096
-  ohos_hiviewdfx_hiview_lite_customize_implementation = false
+  OpenHarmony_hiviewdfx_hiview_lite_output_option = 0
+  OpenHarmony_hiviewdfx_hilog_lite_level = 1
+  OpenHarmony_hiviewdfx_hilog_lite_level_release = 3
+  OpenHarmony_hiviewdfx_hilog_lite_log_switch = 1
+  OpenHarmony_hiviewdfx_dump_lite_dump_switch = 0
+  OpenHarmony_hiviewdfx_hievent_lite_event_switch = 1
+  OpenHarmony_hiviewdfx_hiview_lite_output_module = -1
+  OpenHarmony_hiviewdfx_hiview_lite_dir = ""
+  OpenHarmony_hiviewdfx_hiview_lite_stack_size = 4096
+  OpenHarmony_hiviewdfx_hiview_lite_customize_implementation = false
 }
 ```
 
@@ -777,11 +775,13 @@ void HIVIEW_UartPutChar(int ch)
 }
 ```
 
-### 6.3 修改huks
+### 5.3 修改huks
 
 修改文件**base/security/huks/utils/mutex/hks_mutex.c**
 
-因为原生系统不支持posix的mutex接口，这里修改mutex接口为los接口
+因为原生系统不支持posix的mutex接口，这里修改mutex接口为los接口。
+
+如果原生系统支持posix接口，则这里不需要进行修改。
 
 ```c
 LITE_OS_SEC_TEXT_INIT UINT32 LOS_MuxCreate(UINT32 *muxHandle);
@@ -833,7 +833,7 @@ void HksMutexClose(HksMutex *mutex)
 
 ```
 
-### 6.4 修改bootstrap_lite
+### 5.4 修改bootstrap_lite
 
 修改文件**base/startup/bootstrap_lite/services/source/core_main.h**，取消重复调用
 
@@ -849,9 +849,9 @@ void HksMutexClose(HksMutex *mutex)
     } while (0)
 ```
 
-### 6.5 删除-fPIC
+### 5.5 删除-fPIC
 
-由于是静态库，不需要fPIC，会导致程序运行异常。
+由于是静态库，不需要fPIC，否则会导致程序运行异常。
 
 修改**foundation/ability/ability_lite/frameworks/want_lite/BUILD.gn**，删除fPIC
 
@@ -876,7 +876,7 @@ void HksMutexClose(HksMutex *mutex)
 }
 ```
 
-### 6.6 修改xts
+### 5.6 修改xts
 
 修改日志打印，将日志输出到串口
 
@@ -888,7 +888,11 @@ void HksMutexClose(HksMutex *mutex)
 #define UNITY_OUTPUT_CHAR HIVIEW_UartPutChar
 ```
 
-## 7. 总结
+## 6. 总结
 
-该方案与官方方案相比，降低了适配复杂度，减少了工作量和工期，是一种快速的适配方案。请各位读者根据项目的实际情况在两种方案种进行选择。
+该方案与官方方案相比，降低了适配复杂度，减少了工作量和工期，是一种快速的适配方案。
+
+请各位读者根据项目的实际情况在两种方案中进行选择。
+
+该方案涉及的相关源码已经开源，网址：https://gitee.com/pjie131/OpenHarmony_L0_adapter
 

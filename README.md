@@ -1,4 +1,4 @@
-# OHOS_L0_adapter
+# Openharmony_L0_adapter
 一种OpenHarmony L0系统适配方案
 
 目录说明

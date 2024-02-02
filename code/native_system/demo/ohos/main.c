@@ -17,7 +17,7 @@
 
 extern void OHOS_SystemInit();
 static bool ohos_started = false;
-int ohos_start(int argc, char** argv)
+static int ohos_start(int argc, char** argv)
 {
     if (ohos_started) {
         CmTraceLog(LOG_LEVEL_INFO, "ohos started!");

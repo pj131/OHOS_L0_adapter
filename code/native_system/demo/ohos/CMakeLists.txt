@@ -36,7 +36,7 @@ set(OHOS_FLAGS "-Wl,--whole-archive ${OHOS_LIBS} -Wl,--no-whole-archive")
 ######################################ohos demo###########################
 
 set(target ohos_demo)
-add_appimg_flash_example(${target} ohos-main.c ohos-demo.c)
+add_appimg_flash_example(${target} main.c demo.c)
 include_directories(${INC_DIR})
 include_directories(${INC_DIR}/system)
 
