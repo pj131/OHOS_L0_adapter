@@ -55,7 +55,7 @@ vendor/ohemu/L0_xts_demo/
 │   ├── no_kernel_test.config
 │   └── release.config
 ├── LICENSE
-├── OpenHarmony.build
+├── ohos.build
 └── qemu_run.sh
 ```
 
@@ -70,7 +70,7 @@ device/qemu/L0_xts_demo/
 │   ├── board
 │   ├── BUILD.gn
 │   └── config.gni
-├── OpenHarmony.build
+├── ohos.build
 ├── README.md
 └── README_zh.md
 ```
