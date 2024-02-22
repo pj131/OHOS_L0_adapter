@@ -84,7 +84,7 @@ vendor/ohemu/L0_xts_demo/config.json文件包含了所有必须的子系统配�
 ```json
 {
   "product_name": "L0_xts_demo",
-  "OpenHarmony_version": "OpenHarmony 1.0",
+  "ohos_version": "OpenHarmony 1.0",
   "type":"mini",
   "version": "3.0",
   "device_company": "qemu",
@@ -131,7 +131,7 @@ vendor/ohemu/L0_xts_demo/config.json文件包含了所有必须的子系统配�
         {
           "component": "init_lite",
           "features": [
-            "enable_OpenHarmony_startup_init_feature_begetctl_liteos = true"
+            "enable_ohos_startup_init_feature_begetctl_liteos = true"
           ]
         },
         { "component": "syspara_lite", "features": [] }
@@ -194,8 +194,8 @@ board_cpu = "cortex-a5"
 board_arch = ""
 
 # Toolchain name used for system compiling.
-# E.g. gcc-arm-none-eabi, arm-linux-harmonyeabi-gcc, OpenHarmony-clang,  riscv32-unknown-elf.
-# Note: The default toolchain is "OpenHarmony-clang". It's not mandatory if you use the default toolchain.
+# E.g. gcc-arm-none-eabi, arm-linux-harmonyeabi-gcc, ohos-clang,  riscv32-unknown-elf.
+# Note: The default toolchain is "ohos-clang". It's not mandatory if you use the default toolchain.
 board_toolchain = "arm-none-eabi-gcc"
 
 use_board_toolchain = true
@@ -260,7 +260,7 @@ board_ld_flags += [
 # Board related headfiles search path.
 board_include_dirs = [ "//utils/native/lite/include" ]
 
-# Board adapter dir for OpenHarmony components.
+# Board adapter dir for ohos components.
 board_adapter_dir = "//device/qemu/L0_xts_demo/driver"
 
 # Sysroot path.
@@ -292,7 +292,7 @@ python3 ./build.py -p L0_xts_demo -f -b debug --gn-args build_xts=true
 
 #### 3.6.1 编写demo
 
-OpenHarmony的demo分为两个单元，OpenHarmony_main.c和OpenHarmony_demo.c。
+OpenHarmony的demo分为两个单元，main.c和demo.c。
 
 - main.c负责启动OpenHarmony，
 - demo.c为应用程序，循环打印hilog日志。
@@ -699,10 +699,10 @@ int HiLogWriteInternal(const char* buffer, size_t bufLen);
 修改**third_party/bounds_checking_function/BUILD.gn**
 
 ```properties
-if (defined(OpenHarmony_lite)) {
+if (defined(ohos_lite)) {
 #注意，这里需要编译生成libsec_static静态库
   # When the kernel is liteos_m, use //kernel/liteos_m/kal/libsec/BUILD.gn to compile.
-  if (OpenHarmony_kernel_type == "liteos_m") {
+  if (ohos_kernel_type == "liteos_m") {
     # group("libsec_static") {
     # }
   } else {
@@ -738,16 +738,16 @@ if (defined(OpenHarmony_lite)) {
 #base/hiviewdfx/hiview_lite/BUILD.gn
 declare_args() {
 #改为无缓存，直接输出到串口
-  OpenHarmony_hiviewdfx_hiview_lite_output_option = 0
-  OpenHarmony_hiviewdfx_hilog_lite_level = 1
-  OpenHarmony_hiviewdfx_hilog_lite_level_release = 3
-  OpenHarmony_hiviewdfx_hilog_lite_log_switch = 1
-  OpenHarmony_hiviewdfx_dump_lite_dump_switch = 0
-  OpenHarmony_hiviewdfx_hievent_lite_event_switch = 1
-  OpenHarmony_hiviewdfx_hiview_lite_output_module = -1
-  OpenHarmony_hiviewdfx_hiview_lite_dir = ""
-  OpenHarmony_hiviewdfx_hiview_lite_stack_size = 4096
-  OpenHarmony_hiviewdfx_hiview_lite_customize_implementation = false
+  ohos_hiviewdfx_hiview_lite_output_option = 0
+  ohos_hiviewdfx_hilog_lite_level = 1
+  ohos_hiviewdfx_hilog_lite_level_release = 3
+  ohos_hiviewdfx_hilog_lite_log_switch = 1
+  ohos_hiviewdfx_dump_lite_dump_switch = 0
+  ohos_hiviewdfx_hievent_lite_event_switch = 1
+  ohos_hiviewdfx_hiview_lite_output_module = -1
+  ohos_hiviewdfx_hiview_lite_dir = ""
+  ohos_hiviewdfx_hiview_lite_stack_size = 4096
+  ohos_hiviewdfx_hiview_lite_customize_implementation = false
 }
 ```
 
